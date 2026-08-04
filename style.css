@@ -865,70 +865,257 @@ h1, h2, h3, h4, h5, h6 {
 /* --- CERTIFICATES SECTION --- */
 .certificates-slider-wrapper {
     position: relative;
-    padding: 20px 0;
+    padding: 10px 0 30px;
 }
-.certificate-slide-card {
-    padding: 16px;
-    text-align: center;
+
+/* Row: [arrow] [swiper] [arrow] */
+.cert-slider-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 20px;
+    padding: 0 10px;
+}
+
+/* The swiper takes remaining space, max width controlled */
+.cert-swiper {
+    flex: 1;
+    max-width: 480px;
+    min-width: 0;
+    overflow: hidden;
+    border-radius: 20px;
+    padding-bottom: 48px !important;
+    position: relative;
+}
+
+/* External nav buttons */
+.cert-nav-btn {
+    flex-shrink: 0;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: rgba(6, 182, 212, 0.07);
+    border: 1.5px solid rgba(6, 182, 212, 0.3);
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1rem;
     cursor: pointer;
-    transition: var(--transition-smooth);
+    transition: background 0.3s ease, border-color 0.3s ease, transform 0.2s ease;
+    user-select: none;
+    /* Override Swiper's positioning since they're now flex children */
+    position: static !important;
+    margin: 0 !important;
+    top: auto !important;
+    left: auto !important;
+    right: auto !important;
+    transform: none !important;
+}
+.cert-nav-btn::after {
+    display: none !important; /* hide Swiper's default arrows */
+}
+.cert-nav-btn:hover {
+    background: rgba(6, 182, 212, 0.18);
+    border-color: var(--accent);
+    transform: scale(1.08) !important;
+}
+.cert-nav-btn.swiper-button-disabled {
+    opacity: 0.3;
+    pointer-events: none;
+}
+
+/* ---- FLIP CARD ---- */
+.swiper-slide {
+    /* Needed so perspective works per-slide */
+    overflow: visible;
+}
+
+.certificate-slide-card {
+    background: transparent;
+    perspective: 1100px;
+    height: 410px;
+    width: 100%;
+    border: none;
+    box-shadow: none;
+    cursor: pointer;
+    position: relative;
+}
+
+.certificate-card-inner {
+    position: relative;
+    width: 100%;
     height: 100%;
+    transition: transform 0.75s cubic-bezier(0.4, 0, 0.2, 1);
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
+/* Hover flip - desktop */
+@media (hover: hover) {
+    .certificate-slide-card:hover .certificate-card-inner {
+        transform: rotateY(180deg);
+    }
+}
+
+/* JS-toggled flip for mobile */
+.certificate-slide-card.flipped .certificate-card-inner {
+    transform: rotateY(180deg);
+}
+
+/* Shared front/back base */
+.certificate-card-front,
+.certificate-card-back {
+    position: absolute;
+    inset: 0;
+    border-radius: 18px;
+    border: 1px solid var(--border-color);
     display: flex;
     flex-direction: column;
-    position: relative;
+    align-items: center;
+    padding: 22px;
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    overflow: hidden;
 }
-.certificate-slide-card:hover {
-    transform: translateY(-6px);
-    border-color: var(--accent);
-    animation: border-glow-pulse 2s infinite alternate;
+
+/* FRONT */
+.certificate-card-front {
+    background: var(--bg-card);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    box-shadow: 0 14px 40px -10px rgba(0, 0, 0, 0.5);
+    justify-content: center;
+    gap: 16px;
+    transition: border-color 0.35s ease, box-shadow 0.35s ease;
 }
-@keyframes border-glow-pulse {
-    0% {
-        border-color: rgba(6, 182, 212, 0.4);
-        box-shadow: 0 0 15px rgba(6, 182, 212, 0.2);
-    }
-    100% {
-        border-color: rgba(124, 58, 237, 0.8);
-        box-shadow: 0 0 30px rgba(124, 58, 237, 0.5);
-    }
+.certificate-slide-card:hover .certificate-card-front {
+    border-color: rgba(6, 182, 212, 0.45);
+    box-shadow: 0 0 35px rgba(6, 182, 212, 0.15);
 }
+
+/* BACK */
+.certificate-card-back {
+    background: linear-gradient(145deg,
+        rgba(8, 12, 28, 0.98) 0%,
+        rgba(37, 99, 235, 0.1) 50%,
+        rgba(124, 58, 237, 0.18) 100%);
+    backdrop-filter: blur(16px) saturate(180%);
+    -webkit-backdrop-filter: blur(16px) saturate(180%);
+    border-color: rgba(6, 182, 212, 0.3);
+    box-shadow: 0 14px 45px -10px rgba(124, 58, 237, 0.35);
+    transform: rotateY(180deg);
+    justify-content: center;
+    gap: 0;
+    padding: 30px 26px;
+}
+
+/* Certificate image on front */
 .certificate-img-container {
     width: 100%;
-    height: 200px;
-    border-radius: 10px;
+    height: 0;
+    flex: 1;
+    border-radius: 12px;
     overflow: hidden;
-    margin-bottom: 15px;
-    position: relative;
     border: 1px solid var(--border-color);
+    min-height: 220px;
+    max-height: 300px;
 }
 .certificate-img-container img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     transition: transform 0.5s ease;
+    display: block;
 }
 .certificate-slide-card:hover .certificate-img-container img {
-    transform: scale(1.05);
+    transform: scale(1.06);
 }
-.certificate-card-title {
-    font-size: 1.1rem;
-    font-weight: 600;
-    margin-bottom: 5px;
-    color: var(--text-primary);
-}
-.certificate-card-issuer {
-    font-size: 0.85rem;
+
+/* Flip hint */
+.flip-hint {
+    font-size: 0.72rem;
     color: var(--accent);
     font-weight: 500;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    text-transform: uppercase;
+    letter-spacing: 1.3px;
+    opacity: 0.85;
+    flex-shrink: 0;
 }
-.swiper-button-next, .swiper-button-prev {
-    color: var(--accent) !important;
+.flip-hint i {
+    animation: rotate-hint 2.5s infinite linear;
+}
+@keyframes rotate-hint {
+    from { transform: rotate(0deg); }
+    to   { transform: rotate(360deg); }
+}
+
+/* Back content */
+.certificate-info-wrap {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    margin-bottom: 22px;
+}
+.certificate-card-title {
+    font-size: 1.45rem;
+    font-weight: 800;
+    margin-bottom: 6px;
+    color: var(--text-primary);
+    line-height: 1.2;
+    text-align: center;
+}
+.certificate-card-issuer {
+    font-size: 0.95rem;
+    color: var(--accent);
+    font-weight: 600;
+}
+.certificate-meta {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 20px;
+    font-size: 0.88rem;
+    color: var(--text-secondary);
+    align-items: center;
+}
+.certificate-meta span {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.certificate-meta i {
+    color: var(--accent);
+}
+.view-cert-btn {
+    padding: 11px 28px;
+    font-size: 0.85rem;
+    width: auto;
+    flex-shrink: 0;
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.35);
+}
+
+/* Dots */
+.swiper-pagination {
+    bottom: 12px !important;
 }
 .swiper-pagination-bullet {
-    background: var(--text-secondary) !important;
+    width: 8px !important;
+    height: 8px !important;
+    background: rgba(255,255,255,0.15) !important;
+    opacity: 1 !important;
+    transition: background 0.3s ease, transform 0.3s ease;
 }
 .swiper-pagination-bullet-active {
     background: var(--accent) !important;
+    transform: scale(1.4);
+    box-shadow: 0 0 8px rgba(6, 182, 212, 0.6);
 }
 
 /* --- LIGHTBOX POPUP --- */
@@ -1405,5 +1592,11 @@ textarea.form-input {
     }
     .form-group-row {
         grid-template-columns: 1fr;
+    }
+    .certificate-slide-card {
+        height: 320px;
+    }
+    .certificate-img-container {
+        height: 190px;
     }
 }

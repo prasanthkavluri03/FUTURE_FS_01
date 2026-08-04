@@ -1,77 +1,3 @@
-// --- TEMPORARY DEBUGGER ---
-(function() {
-    const debugContainer = document.createElement('div');
-    debugContainer.id = 'temp-debug-console';
-    debugContainer.style.position = 'fixed';
-    debugContainer.style.bottom = '20px';
-    debugContainer.style.left = '20px';
-    debugContainer.style.maxHeight = '200px';
-    debugContainer.style.overflowY = 'auto';
-    debugContainer.style.background = 'rgba(0, 0, 0, 0.85)';
-    debugContainer.style.color = '#ff6b6b';
-    debugContainer.style.padding = '15px';
-    debugContainer.style.borderRadius = '8px';
-    debugContainer.style.zIndex = '999999';
-    debugContainer.style.fontSize = '12px';
-    debugContainer.style.fontFamily = 'monospace';
-    debugContainer.style.border = '1px solid #ff4757';
-    debugContainer.style.boxShadow = '0 5px 25px rgba(0,0,0,0.5)';
-    debugContainer.style.width = '350px';
-    debugContainer.innerHTML = '<strong>Debug Logs:</strong><br>';
-    
-    document.addEventListener('DOMContentLoaded', () => {
-        document.body.appendChild(debugContainer);
-    });
-
-    window.addEventListener('error', (e) => {
-        const p = document.createElement('p');
-        p.style.margin = '4px 0';
-        p.innerText = `ERR: ${e.message} at ${e.filename.split('/').pop()}:${e.lineno}`;
-        debugContainer.appendChild(p);
-        debugContainer.scrollTop = debugContainer.scrollHeight;
-    });
-
-    const origError = console.error;
-    console.error = function(...args) {
-        origError.apply(console, args);
-        const p = document.createElement('p');
-        p.style.margin = '4px 0';
-        p.style.color = '#ff4757';
-        p.innerText = `CON_ERR: ${args.join(' ')}`;
-        debugContainer.appendChild(p);
-        debugContainer.scrollTop = debugContainer.scrollHeight;
-    };
-
-    const origLog = console.log;
-    console.log = function(...args) {
-        origLog.apply(console, args);
-        const p = document.createElement('p');
-        p.style.margin = '4px 0';
-        p.style.color = '#2ed573';
-        p.innerText = `LOG: ${args.join(' ')}`;
-        debugContainer.appendChild(p);
-        debugContainer.scrollTop = debugContainer.scrollHeight;
-    };
-    // Log scroll activity
-    window.addEventListener('scroll', () => {
-        if (Math.random() < 0.05) {
-            console.log(`Scroll Event: y=${Math.round(window.scrollY)}, docHeight=${document.documentElement.scrollHeight}`);
-        }
-    });
-
-    // Check ScrollTriggers after 2 seconds
-    setTimeout(() => {
-        if (typeof ScrollTrigger !== 'undefined') {
-            const allTriggers = ScrollTrigger.getAll();
-            console.log(`ScrollTriggers registered: ${allTriggers.length}`);
-            allTriggers.forEach((t, i) => {
-                console.log(`T${i}: trigger="${t.vars.trigger}", start=${Math.round(t.start)}, end=${Math.round(t.end)}, active=${t.isActive}`);
-            });
-        } else {
-            console.error('ScrollTrigger is NOT defined!');
-        }
-    }, 2000);
-})();
 
 document.addEventListener('DOMContentLoaded', () => {
     initPageLoader();
@@ -492,32 +418,21 @@ function initSkillBarsReveal() {
 /* --- 10. SWIPER CERTIFICATES GALLERY --- */
 function initSwiperCertificates() {
     if (typeof Swiper !== 'undefined') {
-        new Swiper('.swiper', {
+        new Swiper('.cert-swiper', {
             slidesPerView: 1,
-            spaceBetween: 25,
+            spaceBetween: 0,
             loop: true,
             autoplay: {
-                delay: 3500,
+                delay: 3000,
                 disableOnInteraction: false,
             },
             pagination: {
-                el: '.swiper-pagination',
+                el: '.cert-swiper .swiper-pagination',
                 clickable: true,
             },
             navigation: {
-                nextEl: '.swiper-button-next',
-                prevEl: '.swiper-button-prev',
-            },
-            breakpoints: {
-                640: {
-                    slidesPerView: 1.5,
-                },
-                768: {
-                    slidesPerView: 2.2,
-                },
-                1024: {
-                    slidesPerView: 3,
-                }
+                nextEl: '#cert-next',
+                prevEl: '#cert-prev',
             }
         });
     }
@@ -532,20 +447,32 @@ function initLightbox() {
 
     if (!lightbox || !lightboxImg || !lightboxClose) return;
 
+    // Toggle flip on card click (for touch / mobile devices)
     cards.forEach(card => {
-        card.addEventListener('click', () => {
-            const img = card.querySelector('.certificate-img-container img');
+        card.addEventListener('click', (e) => {
+            // If "View Certificate" button was clicked, open lightbox instead
+            if (e.target.closest('.view-cert-btn')) return;
+            card.classList.toggle('flipped');
+        });
+    });
+
+    // "View Certificate" button opens the lightbox
+    document.querySelectorAll('.view-cert-btn').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            const card = btn.closest('.certificate-slide-card');
+            const img = card ? card.querySelector('.certificate-img-container img') : null;
             if (img) {
                 lightboxImg.src = img.src;
                 lightbox.classList.add('active');
-                document.body.style.overflow = 'hidden'; // Lock scrolling
+                document.body.style.overflow = 'hidden';
             }
         });
     });
 
     const closeLightbox = () => {
         lightbox.classList.remove('active');
-        document.body.style.overflow = ''; // Unlock scrolling
+        document.body.style.overflow = '';
     };
 
     lightboxClose.addEventListener('click', closeLightbox);
