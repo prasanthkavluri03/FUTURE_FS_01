@@ -756,3 +756,121 @@ function animateHeroEntrance() {
         );
     }
 }
+
+/* --- CONTACT FORM API INTEGRATION --- */
+function initContactForm() {
+    const form = document.getElementById('contact-form');
+    if (!form) return;
+
+    const nameInput = document.getElementById('form-name');
+    const emailInput = document.getElementById('form-email');
+    const subjectInput = document.getElementById('form-subject');
+    const messageInput = document.getElementById('form-message');
+    const submitBtn = form.querySelector('.submit-btn');
+    const statusDiv = document.getElementById('form-status');
+
+    const API_URL = 'http://localhost:5000/api/contact';
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+
+        // Prevent duplicate submission
+        if (submitBtn.disabled) return;
+
+        // Reset previous status
+        statusDiv.className = 'form-status';
+        statusDiv.style.display = 'none';
+        statusDiv.innerHTML = '';
+
+        // Form fields extract
+        const name = nameInput.value.trim();
+        const email = emailInput.value.trim();
+        const subject = subjectInput.value.trim();
+        const message = messageInput.value.trim();
+
+        // Frontend Client-Side Validations
+        if (!name || !email || !subject || !message) {
+            showStatus('Please fill in all required fields.', 'error');
+            return;
+        }
+
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            showStatus('Please enter a valid email address.', 'error');
+            return;
+        }
+
+        if (message.length < 10) {
+            showStatus('Message must be at least 10 characters long.', 'error');
+            return;
+        }
+
+        // UI Loading state
+        const originalBtnHTML = submitBtn.innerHTML;
+        submitBtn.disabled = true;
+        submitBtn.style.opacity = '0.7';
+        submitBtn.style.cursor = 'not-allowed';
+        submitBtn.innerHTML = `
+            <span class="submit-btn-text">Sending...</span>
+            <i class="fa-solid fa-circle-notch fa-spin"></i>
+        `;
+
+        try {
+            const response = await fetch(API_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ name, email, subject, message })
+            });
+
+            const data = await response.json();
+
+            if (response.ok && data.success) {
+                showStatus(data.message || 'Thank you! Your message has been sent successfully.', 'success');
+                form.reset();
+
+                // Trigger celebratory confetti if available
+                if (typeof confetti === 'function') {
+                    confetti({
+                        particleCount: 80,
+                        spread: 60,
+                        origin: { y: 0.8 }
+                    });
+                }
+            } else {
+                const errMsg = data.errors ? data.errors.join('<br>') : (data.message || 'Failed to send message. Please try again.');
+                showStatus(errMsg, 'error');
+            }
+        } catch (error) {
+            console.error('Contact form submission error:', error);
+            showStatus('Unable to reach the server. Please check if the backend is running.', 'error');
+        } finally {
+            // Restore button state
+            submitBtn.disabled = false;
+            submitBtn.style.opacity = '1';
+            submitBtn.style.cursor = 'pointer';
+            submitBtn.innerHTML = originalBtnHTML;
+        }
+    });
+
+    function showStatus(msg, type) {
+        statusDiv.innerHTML = msg;
+        statusDiv.style.display = 'block';
+        statusDiv.style.marginTop = '15px';
+        statusDiv.style.padding = '12px 16px';
+        statusDiv.style.borderRadius = '8px';
+        statusDiv.style.fontSize = '14px';
+
+        if (type === 'success') {
+            statusDiv.style.backgroundColor = 'rgba(46, 204, 113, 0.15)';
+            statusDiv.style.border = '1px solid rgba(46, 204, 113, 0.4)';
+            statusDiv.style.color = '#2ecc71';
+        } else {
+            statusDiv.style.backgroundColor = 'rgba(231, 76, 60, 0.15)';
+            statusDiv.style.border = '1px solid rgba(231, 76, 60, 0.4)';
+            statusDiv.style.color = '#e74c3c';
+        }
+    }
+}
+
