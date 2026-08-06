@@ -175,7 +175,7 @@ body:hover .custom-cursor-outline {
     justify-content: center;
     align-items: center;
     flex-direction: column;
-    transition: opacity 0.8s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
+    transition: opacity 15s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.8s;
 }
 .loader-spinner {
     position: relative;

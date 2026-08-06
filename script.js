@@ -240,7 +240,6 @@ function initTypingEffect() {
         "Full Stack Python Developer",
         "Python Developer",
         "Django Developer",
-        "Data Science Enthusiast"
     ];
     
     let roleIndex = 0;
