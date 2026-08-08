@@ -488,60 +488,111 @@ function initLightbox() {
     });
 }
 
-/* --- 12. CONTACT FORM SUBMISSION --- */
+/* --- 12. WHATSAPP CONTACT FORM INTEGRATION --- */
 function initContactForm() {
     const form = document.getElementById('contact-form');
-    const statusMsg = document.getElementById('form-status');
-    const submitBtnText = document.querySelector('.submit-btn-text');
-    const submitBtnIcon = document.querySelector('.submit-btn i');
-
     if (!form) return;
+
+    // YOUR WHATSAPP NUMBER (with country code, e.g., '919876543210')
+    // EDIT THIS NUMBER TO YOUR REAL WHATSAPP NUMBER
+    const WHATSAPP_NUMBER = '9573329547';
+
+    const nameInput = document.getElementById('form-name');
+    const emailInput = document.getElementById('form-email');
+    const subjectInput = document.getElementById('form-subject');
+    const messageInput = document.getElementById('form-message');
+    const submitBtn = form.querySelector('.submit-btn');
+    const submitBtnText = form.querySelector('.submit-btn-text');
+    const submitBtnIcon = form.querySelector('.submit-btn i');
+    const statusDiv = document.getElementById('form-status');
 
     form.addEventListener('submit', (e) => {
         e.preventDefault();
-        
-        const name = document.getElementById('form-name').value;
-        const email = document.getElementById('form-email').value;
-        const subject = document.getElementById('form-subject').value;
-        const message = document.getElementById('form-message').value;
 
+        // Form field values
+        const name = nameInput.value.trim();
+        const email = emailInput.value.trim();
+        const subject = subjectInput.value.trim();
+        const message = messageInput.value.trim();
+
+        // Validations
         if (!name || !email || !subject || !message) {
-            showStatus('Please fill in all form fields.', 'error');
+            showStatus('Please fill in all required fields.', 'error');
             return;
         }
 
-        // Show loading state
-        submitBtnText.textContent = 'Sending Message...';
-        submitBtnIcon.className = 'fa-solid fa-circle-notch fa-spin';
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            showStatus('Please enter a valid email address.', 'error');
+            return;
+        }
 
-        // Simulate API call
+        if (message.length < 5) {
+            showStatus('Message is too short.', 'error');
+            return;
+        }
+
+        // Format structured message for WhatsApp
+        const whatsappText = `📌 *New Contact Message from Portfolio*\n\n` +
+            `👤 *Name:* ${name}\n` +
+            `✉️ *Email:* ${email}\n` +
+            `🏷️ *Subject:* ${subject}\n\n` +
+            `💬 *Message:*\n${message}`;
+
+        // Construct WhatsApp Web / App Direct URL
+        const whatsappUrl = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(whatsappText)}`;
+
+        // UI Loading State
+        const originalBtnText = submitBtnText ? submitBtnText.textContent : 'Send Message via WhatsApp';
+        const originalIconClass = submitBtnIcon ? submitBtnIcon.className : 'fa-brands fa-whatsapp';
+
+        if (submitBtnText) submitBtnText.textContent = 'Redirecting to WhatsApp...';
+        if (submitBtnIcon) submitBtnIcon.className = 'fa-solid fa-circle-notch fa-spin';
+
+        showStatus('Opening WhatsApp with your formatted message...', 'success');
+
+        // Trigger confetti celebration
+        if (typeof confetti === 'function') {
+            confetti({
+                particleCount: 100,
+                spread: 70,
+                origin: { y: 0.7 }
+            });
+        }
+
+        // Open WhatsApp in a new tab after a brief delay
         setTimeout(() => {
-            submitBtnText.textContent = 'Send Message';
-            submitBtnIcon.className = 'fa-solid fa-paper-plane';
-            
-            showStatus('Thank you! Your message was sent successfully.', 'success');
-            
-            // Trigger confetti
-            if (typeof confetti === 'function') {
-                confetti({
-                    particleCount: 120,
-                    spread: 80,
-                    origin: { y: 0.6 },
-                    colors: ['#2563EB', '#7C3AED', '#06B6D4', '#10B981']
-                });
-            }
+            window.open(whatsappUrl, '_blank');
 
+            // Reset form and restore button state
             form.reset();
-        }, 1500);
+            if (submitBtnText) submitBtnText.textContent = originalBtnText;
+            if (submitBtnIcon) submitBtnIcon.className = originalIconClass;
+        }, 800);
     });
 
-    function showStatus(text, type) {
-        statusMsg.textContent = text;
-        statusMsg.className = `form-status ${type}`;
-        
+    function showStatus(msg, type) {
+        if (!statusDiv) return;
+        statusDiv.innerHTML = msg;
+        statusDiv.style.display = 'block';
+        statusDiv.style.marginTop = '15px';
+        statusDiv.style.padding = '12px 16px';
+        statusDiv.style.borderRadius = '8px';
+        statusDiv.style.fontSize = '14px';
+
+        if (type === 'success') {
+            statusDiv.style.backgroundColor = 'rgba(46, 204, 113, 0.15)';
+            statusDiv.style.border = '1px solid rgba(46, 204, 113, 0.4)';
+            statusDiv.style.color = '#2ecc71';
+        } else {
+            statusDiv.style.backgroundColor = 'rgba(231, 76, 60, 0.15)';
+            statusDiv.style.border = '1px solid rgba(231, 76, 60, 0.4)';
+            statusDiv.style.color = '#e74c3c';
+        }
+
         setTimeout(() => {
-            statusMsg.style.display = 'none';
-        }, 5000);
+            statusDiv.style.display = 'none';
+        }, 6000);
     }
 }
 
@@ -756,120 +807,5 @@ function animateHeroEntrance() {
     }
 }
 
-/* --- CONTACT FORM API INTEGRATION --- */
-function initContactForm() {
-    const form = document.getElementById('contact-form');
-    if (!form) return;
 
-    const nameInput = document.getElementById('form-name');
-    const emailInput = document.getElementById('form-email');
-    const subjectInput = document.getElementById('form-subject');
-    const messageInput = document.getElementById('form-message');
-    const submitBtn = form.querySelector('.submit-btn');
-    const statusDiv = document.getElementById('form-status');
-
-    const API_URL = 'http://localhost:5000/api/contact';
-
-    form.addEventListener('submit', async (e) => {
-        e.preventDefault();
-
-        // Prevent duplicate submission
-        if (submitBtn.disabled) return;
-
-        // Reset previous status
-        statusDiv.className = 'form-status';
-        statusDiv.style.display = 'none';
-        statusDiv.innerHTML = '';
-
-        // Form fields extract
-        const name = nameInput.value.trim();
-        const email = emailInput.value.trim();
-        const subject = subjectInput.value.trim();
-        const message = messageInput.value.trim();
-
-        // Frontend Client-Side Validations
-        if (!name || !email || !subject || !message) {
-            showStatus('Please fill in all required fields.', 'error');
-            return;
-        }
-
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
-            showStatus('Please enter a valid email address.', 'error');
-            return;
-        }
-
-        if (message.length < 10) {
-            showStatus('Message must be at least 10 characters long.', 'error');
-            return;
-        }
-
-        // UI Loading state
-        const originalBtnHTML = submitBtn.innerHTML;
-        submitBtn.disabled = true;
-        submitBtn.style.opacity = '0.7';
-        submitBtn.style.cursor = 'not-allowed';
-        submitBtn.innerHTML = `
-            <span class="submit-btn-text">Sending...</span>
-            <i class="fa-solid fa-circle-notch fa-spin"></i>
-        `;
-
-        try {
-            const response = await fetch(API_URL, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
-                body: JSON.stringify({ name, email, subject, message })
-            });
-
-            const data = await response.json();
-
-            if (response.ok && data.success) {
-                showStatus(data.message || 'Thank you! Your message has been sent successfully.', 'success');
-                form.reset();
-
-                // Trigger celebratory confetti if available
-                if (typeof confetti === 'function') {
-                    confetti({
-                        particleCount: 80,
-                        spread: 60,
-                        origin: { y: 0.8 }
-                    });
-                }
-            } else {
-                const errMsg = data.errors ? data.errors.join('<br>') : (data.message || 'Failed to send message. Please try again.');
-                showStatus(errMsg, 'error');
-            }
-        } catch (error) {
-            console.error('Contact form submission error:', error);
-            showStatus('Unable to reach the server. Please check if the backend is running.', 'error');
-        } finally {
-            // Restore button state
-            submitBtn.disabled = false;
-            submitBtn.style.opacity = '1';
-            submitBtn.style.cursor = 'pointer';
-            submitBtn.innerHTML = originalBtnHTML;
-        }
-    });
-
-    function showStatus(msg, type) {
-        statusDiv.innerHTML = msg;
-        statusDiv.style.display = 'block';
-        statusDiv.style.marginTop = '15px';
-        statusDiv.style.padding = '12px 16px';
-        statusDiv.style.borderRadius = '8px';
-        statusDiv.style.fontSize = '14px';
-
-        if (type === 'success') {
-            statusDiv.style.backgroundColor = 'rgba(46, 204, 113, 0.15)';
-            statusDiv.style.border = '1px solid rgba(46, 204, 113, 0.4)';
-            statusDiv.style.color = '#2ecc71';
-        } else {
-            statusDiv.style.backgroundColor = 'rgba(231, 76, 60, 0.15)';
-            statusDiv.style.border = '1px solid rgba(231, 76, 60, 0.4)';
-            statusDiv.style.color = '#e74c3c';
-        }
-    }
-}
 
