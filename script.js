@@ -1,14 +1,12 @@
 
 document.addEventListener('DOMContentLoaded', () => {
     initPageLoader();
-    initCustomCursor();
     initCanvasParticles();
     initTypingEffect();
     initMobileMenu();
     initScrollNavbar();
     initScrollActiveLinks();
     initScrollCounters();
-    initSkillBarsReveal();
     initSwiperCertificates();
     initLightbox();
     initContactForm();
@@ -694,8 +692,8 @@ function animateHeroEntrance() {
             }
         );
 
-        gsap.fromTo('.skills-category', 
-            { y: 50, opacity: 0, transition: 'none' },
+        gsap.fromTo('.skill-icon-card', 
+            { y: 40, opacity: 0, scale: 0.85, transition: 'none' },
             {
                 scrollTrigger: {
                     trigger: '#skills',
@@ -703,9 +701,10 @@ function animateHeroEntrance() {
                 },
                 y: 0,
                 opacity: 1,
-                stagger: 0.15,
-                duration: 0.8,
-                ease: 'power3.out',
+                scale: 1,
+                stagger: 0.06,
+                duration: 0.6,
+                ease: 'back.out(1.5)',
                 clearProps: 'all'
             }
         );
