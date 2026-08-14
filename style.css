@@ -589,6 +589,129 @@ h6 {
     position: relative;
 }
 
+/* --- ORBIT SKILL ICONS AROUND PROFILE --- */
+.profile-orbit-wrapper {
+    position: relative;
+    width: 320px;
+    height: 320px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.orbit-icon {
+    position: absolute;
+    width: 46px;
+    height: 46px;
+    border-radius: 50%;
+    background: rgba(17, 24, 39, 0.9);
+    border: 1.5px solid rgba(6, 182, 212, 0.35);
+    box-shadow: 0 4px 15px rgba(6, 182, 212, 0.2), 0 0 8px rgba(37, 99, 235, 0.15);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 9px;
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    z-index: 5;
+}
+
+.orbit-icon:hover {
+    transform: scale(1.2);
+    box-shadow: 0 6px 22px rgba(6, 182, 212, 0.45);
+}
+
+.orbit-icon img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    filter: drop-shadow(0 1px 4px rgba(6, 182, 212, 0.3));
+}
+
+/* Floating keyframe — gentle up/down drift */
+@keyframes orbit-float {
+    0%   { transform: translateY(0px)   scale(1); }
+    50%  { transform: translateY(-10px) scale(1.05); }
+    100% { transform: translateY(0px)   scale(1); }
+}
+
+/* Variant: moves slightly sideways for left/right icons */
+@keyframes orbit-float-x {
+    0%   { transform: translateY(-50%) translateX(0px)   scale(1); }
+    50%  { transform: translateY(-50%) translateX(-8px)  scale(1.05); }
+    100% { transform: translateY(-50%) translateX(0px)   scale(1); }
+}
+
+@keyframes orbit-float-x-right {
+    0%   { transform: translateY(-50%) translateX(0px)  scale(1); }
+    50%  { transform: translateY(-50%) translateX(8px)  scale(1.05); }
+    100% { transform: translateY(-50%) translateX(0px)  scale(1); }
+}
+
+/* Position each icon around the circle (clockwise from top-center) */
+
+/* top center — floats up/down */
+.orbit-icon-1 {
+    top: -22px; left: 50%;
+    transform: translateX(-50%);
+    animation: orbit-float 4s ease-in-out infinite;
+    animation-delay: 0s;
+}
+
+/* top right */
+.orbit-icon-2 {
+    top: 30px; right: -22px;
+    animation: orbit-float 3.8s ease-in-out infinite;
+    animation-delay: -0.5s;
+}
+
+/* right middle — floats sideways */
+.orbit-icon-3 {
+    top: 50%; right: -26px;
+    transform: translateY(-50%);
+    animation: orbit-float-x-right 4.2s ease-in-out infinite;
+    animation-delay: -1s;
+}
+
+/* bottom right */
+.orbit-icon-4 {
+    bottom: 30px; right: -22px;
+    animation: orbit-float 3.6s ease-in-out infinite;
+    animation-delay: -1.5s;
+}
+
+/* bottom center */
+.orbit-icon-5 {
+    bottom: -22px; left: 50%;
+    transform: translateX(-50%);
+    animation: orbit-float 4.4s ease-in-out infinite;
+    animation-delay: -2s;
+}
+
+/* bottom left */
+.orbit-icon-6 {
+    bottom: 30px; left: -22px;
+    animation: orbit-float 3.9s ease-in-out infinite;
+    animation-delay: -2.5s;
+}
+
+/* left middle — floats sideways */
+.orbit-icon-7 {
+    top: 50%; left: -26px;
+    transform: translateY(-50%);
+    animation: orbit-float-x 4.1s ease-in-out infinite;
+    animation-delay: -3s;
+}
+
+/* top left */
+.orbit-icon-8 {
+    top: 30px; left: -22px;
+    animation: orbit-float 3.7s ease-in-out infinite;
+    animation-delay: -3.5s;
+}
+
+
 .profile-glow-circle {
     position: relative;
     width: 320px;
@@ -1452,7 +1575,7 @@ h6 {
 /* --- CONTACT SECTION --- */
 .contact-grid {
     display: grid;
-    grid-template-columns: 1.1fr 0.9fr;
+    grid-template-columns: 0.9fr 1.1fr;
     gap: 50px;
 }
 
@@ -1465,6 +1588,16 @@ h6 {
 @media (max-width: 1200px) {
     .contact-grid {
         grid-template-columns: 1fr;
+    }
+
+    /* On single-column: keep form at top, info cards below */
+    .contact-form-card {
+        order: -1;
+    }
+
+    .contact-info-cards {
+        order: 1;
+        grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     }
 }
 
@@ -1921,14 +2054,32 @@ textarea.form-input {
     }
 
     /* === CONTACT === */
+    .contact-grid {
+        grid-template-columns: 1fr;
+        gap: 30px;
+    }
+
+    .contact-form-card {
+        order: -1;
+    }
+
     .contact-info-cards {
-        grid-template-columns: 1fr 1fr;
-        gap: 16px;
+        order: 1;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 14px;
     }
 
     .form-group-row {
         grid-template-columns: 1fr;
         gap: 0;
+    }
+
+    .back-to-top {
+        bottom: 20px;
+        right: 16px;
+        width: 40px;
+        height: 40px;
+        font-size: 0.9rem;
     }
 
     /* === FOOTER === */
@@ -1948,17 +2099,26 @@ textarea.form-input {
         text-align: center;
     }
 
-    .hero-socials {
-        justify-content: center;
+    /* === ORBIT ICONS (smaller on tablet) === */
+    .profile-orbit-wrapper {
+        width: 240px;
+        height: 240px;
     }
 
-    .back-to-top {
-        bottom: 20px;
-        right: 16px;
-        width: 40px;
-        height: 40px;
-        font-size: 0.9rem;
+    .orbit-icon {
+        width: 38px;
+        height: 38px;
+        padding: 7px;
     }
+
+    .orbit-icon-1  { top: -18px; }
+    .orbit-icon-2  { top: 20px; right: -18px; }
+    .orbit-icon-3  { right: -20px; }
+    .orbit-icon-4  { bottom: 20px; right: -18px; }
+    .orbit-icon-5  { bottom: -18px; }
+    .orbit-icon-6  { bottom: 20px; left: -18px; }
+    .orbit-icon-7  { left: -20px; }
+    .orbit-icon-8  { top: 20px; left: -18px; }
 }
 
 /* --- SM: Small Phones 480px --- */
@@ -1997,6 +2157,27 @@ textarea.form-input {
         width: 200px;
         height: 200px;
     }
+
+    /* === ORBIT ICONS (smaller on small phones) === */
+    .profile-orbit-wrapper {
+        width: 200px;
+        height: 200px;
+    }
+
+    .orbit-icon {
+        width: 34px;
+        height: 34px;
+        padding: 6px;
+    }
+
+    .orbit-icon-1  { top: -16px; }
+    .orbit-icon-2  { top: 16px; right: -16px; }
+    .orbit-icon-3  { right: -18px; }
+    .orbit-icon-4  { bottom: 16px; right: -16px; }
+    .orbit-icon-5  { bottom: -16px; }
+    .orbit-icon-6  { bottom: 16px; left: -16px; }
+    .orbit-icon-7  { left: -18px; }
+    .orbit-icon-8  { top: 16px; left: -16px; }
 
     .scroll-down {
         font-size: 0.7rem;

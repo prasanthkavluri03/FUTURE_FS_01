@@ -98,9 +98,20 @@
                     </div>
                 </div>
                 <div class="hero-image-area">
-                    <div class="profile-glow-circle">
-                        <div class="profile-image-container">
-                            <img src="new_one1.png" alt="Kavluri Prasanth Profile Picture">
+                    <div class="profile-orbit-wrapper">
+                        <!-- Floating skill icons around image -->
+                        <div class="orbit-icon orbit-icon-1"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/python/python-original.svg" alt="Python"></div>
+                        <div class="orbit-icon orbit-icon-2"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/django/django-plain.svg" alt="Django" style="filter:invert(1) brightness(2);"></div>
+                        <div class="orbit-icon orbit-icon-3"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="HTML5"></div>
+                        <div class="orbit-icon orbit-icon-4"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/css3/css3-original.svg" alt="CSS3"></div>
+                        <div class="orbit-icon orbit-icon-5"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/javascript/javascript-original.svg" alt="JavaScript"></div>
+                        <div class="orbit-icon orbit-icon-6"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/mysql/mysql-original.svg" alt="MySQL"></div>
+                        <div class="orbit-icon orbit-icon-7"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/react/react-original.svg" alt="React"></div>
+                        <div class="orbit-icon orbit-icon-8"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/git/git-original.svg" alt="Git"></div>
+                        <div class="profile-glow-circle">
+                            <div class="profile-image-container">
+                                <img src="new_one1.png" alt="Kavluri Prasanth Profile Picture">
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -708,6 +719,22 @@
             </div>
 
             <div class="contact-grid">
+                <!-- Contact form card (comes first for mobile) -->
+                <div class="contact-form-card glass-panel">
+                    <form id="contact-form" class="contact-form">
+                        <div class="form-group-row">
+                            <input type="text" id="form-name" placeholder="Your Name" class="form-input" required>
+                            <input type="email" id="form-email" placeholder="Your Email" class="form-input" required>
+                        </div>
+                        <input type="text" id="form-subject" placeholder="Subject" class="form-input" required>
+                        <textarea id="form-message" placeholder="Your Message" class="form-input" required></textarea>
+                        <button type="submit" class="btn-modern btn-primary submit-btn interactive">
+                            <span class="submit-btn-text">Send Message</span>
+                        </button>
+                        <div id="form-status" class="form-status"></div>
+                    </form>
+                </div>
+
                 <!-- Contact info cards -->
                 <div class="contact-info-cards">
                     <!-- Email Card -->
@@ -767,24 +794,6 @@
                             <a href="https://google.com/drive" target="_blank" class="interactive">Resume Folder</a>
                         </div>
                     </div>
-                </div>
-
-                <!-- Contact form card -->
-                <div class="contact-form-card glass-panel">
-                    <form id="contact-form" class="contact-form">
-                        <div class="form-group-row">
-                            <input type="text" id="form-name" placeholder="Your Name" class="form-input" required>
-                            <input type="email" id="form-email" placeholder="Your Email" class="form-input" required>
-                        </div>
-                        <input type="text" id="form-subject" placeholder="Subject" class="form-input" required>
-                        <textarea id="form-message" placeholder="Your Message" class="form-input" required></textarea>
-
-                        <button type="submit" class="btn-modern btn-primary submit-btn interactive">
-                            <span class="submit-btn-text">Send Message</span>
-
-                        </button>
-                        <div id="form-status" class="form-status"></div>
-                    </form>
                 </div>
             </div>
         </div>
